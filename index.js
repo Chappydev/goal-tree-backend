@@ -4,6 +4,7 @@ const cors = require("cors");
 const { buildTree } = require("./utility/treeHelper");
 
 app.use(cors());
+app.use(express.json());
 
 let goals = [
   {
@@ -81,19 +82,48 @@ let nodes = [
   },
 ];
 
-app.get("/", (request, response) => {
-  response.send("<h1>Hello World!</h1>");
-});
-
 app.get("/api/goals/:id", (request, response) => {
-  const { id } = request.params;
-  const goalData = goals.find((goal) => (goal.id = id));
-  const treeData = buildTree(goalData.insertionNodeId, nodes);
-  response.json(treeData);
+  const id = Number(request.params.id);
+  const goalData = goals.find((goal) => goal.id === id);
+  if (goalData) {
+    const treeData = buildTree(goalData.insertionNodeId, nodes);
+    response.json(treeData);
+  } else {
+    response.status(404).end();
+  }
 });
 
 app.get("/api/nodes", (request, response) => {
   response.json(nodes);
+});
+
+app.get("/api/nodes/:id", (request, response) => {
+  const id = Number(request.params.id);
+  const requestedNode = nodes.find((node) => node.id === id);
+  if (requestedNode) {
+    response.json(requestedNode);
+  } else {
+    return response.status(404).end();
+  }
+});
+
+app.put("/api/nodes/:id", (request, response) => {
+  const id = Number(request.params.id);
+  const body = request.body;
+  // replace node with updated node from request body
+  nodes = nodes.map((node) =>
+    node.id === id
+      ? {
+          id: node.id,
+          name: body.name,
+          isComplete: body.isComplete,
+          children: body.children,
+        }
+      : node
+  );
+  // find updated node and send that as response
+  const updatedNode = nodes.find((node) => node.id === id);
+  response.json(updatedNode);
 });
 
 const PORT = 3001;
