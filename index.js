@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const { buildTree } = require("./utility/treeHelper");
+const { buildTree, buildOverview } = require("./utility/treeHelper");
 
 app.use(cors());
 app.use(express.json());
@@ -94,6 +94,16 @@ app.get("/api/goals/:id", (request, response) => {
     response.json(treeData);
   } else {
     response.status(404).end();
+  }
+});
+
+app.get("/api/goals/:id/overview", (request, response) => {
+  const id = Number(request.params.id);
+  const goalData = goals.find((goal) => goal.id === id);
+
+  if (goalData) {
+    const overview = buildOverview(goalData.insertionNodeId, nodes);
+    response.json(overview);
   }
 });
 

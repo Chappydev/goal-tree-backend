@@ -24,6 +24,22 @@ const buildTree = (insertionNodeId, nodes) => {
   return tree;
 };
 
+const buildOverview = (insertionNodeId, nodes) => {
+  const initNode = nodes.find((node) => node.id === insertionNodeId);
+  const incompleteNodes = nodes.reduce(
+    (arr, curr) => {
+      return !curr.isComplete &&
+        arr.some((node) => node.children.some((childId) => childId === curr.id))
+        ? [...arr, curr]
+        : arr;
+    },
+    [initNode]
+  );
+
+  return incompleteNodes;
+};
+
 module.exports = {
   buildTree,
+  buildOverview,
 };
