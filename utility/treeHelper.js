@@ -17,7 +17,7 @@ const replaceChildIdWithNode = (node, nodeList) => {
 };
 
 const buildTree = (insertionNodeId, nodes) => {
-  const initNode = nodes.find((node) => (node.id = insertionNodeId));
+  const initNode = nodes.find((node) => node.id === insertionNodeId);
 
   const tree = replaceChildIdWithNode(initNode, nodes);
 
