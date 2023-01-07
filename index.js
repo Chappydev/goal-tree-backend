@@ -82,6 +82,10 @@ let nodes = [
   },
 ];
 
+const generateId = () => {
+  return Math.floor(Math.random() * 10000000);
+};
+
 app.get("/api/goals/:id", (request, response) => {
   const id = Number(request.params.id);
   const goalData = goals.find((goal) => goal.id === id);
@@ -124,6 +128,57 @@ app.put("/api/nodes/:id", (request, response) => {
   // find updated node and send that as response
   const updatedNode = nodes.find((node) => node.id === id);
   response.json(updatedNode);
+});
+
+app.post("/api/nodes/:id", (request, response) => {
+  const parentId = Number(request.params.id);
+  const body = request.body;
+  console.log(body);
+
+  if (body.name === undefined || body.insertInd === undefined) {
+    return response
+      .status(400)
+      .json({ error: "must include node name and insertion index" });
+  }
+
+  const { name, insertInd } = body;
+
+  const nodeToInsert = {
+    id: generateId(),
+    name,
+    isComplete: false,
+    children: [],
+  };
+
+  // insert new node's id into parent's children array
+  // then push the new node onto the nodes array
+  console.log("Before: ", nodes);
+  const newNodes = nodes.map((node) => {
+    console.log(
+      node.id === parentId
+        ? node.children.slice(insertInd, node.children.length)
+        : null,
+      node.children.length
+    );
+    return node.id === parentId
+      ? {
+          id: node.id,
+          name: node.name,
+          isComplete: node.isComplete,
+          children: node.children
+            .slice(0, insertInd)
+            .concat([
+              nodeToInsert.id,
+              ...node.children.slice(insertInd, node.children.length),
+            ]),
+        }
+      : node;
+  });
+  newNodes.push(nodeToInsert);
+  nodes = newNodes;
+
+  console.log("After: ", nodes);
+  response.json({ parentId, node: nodeToInsert });
 });
 
 const PORT = 3001;
