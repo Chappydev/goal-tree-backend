@@ -191,6 +191,25 @@ app.post("/api/nodes/:id", (request, response) => {
   response.json({ parentId, node: nodeToInsert });
 });
 
+app.delete("/api/nodes/:id", (request, response) => {
+  const id = Number(request.params.id);
+  // TODO: remove children nodes of the specified node
+
+  nodes = nodes
+    .filter((node) => node.id !== id)
+    .map((node) => {
+      if (node.children.some((childId) => childId === id)) {
+        const indToDelete = node.children.find((childId) => childId === id);
+        console.log([...node.children].splice(indToDelete, 1));
+        return { ...node, children: [...node.children].splice(indToDelete, 1) };
+      } else {
+        return node;
+      }
+    });
+
+  response.status(204).end();
+});
+
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
