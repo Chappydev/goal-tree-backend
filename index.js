@@ -97,14 +97,16 @@ app.get("/api/goals/:id", (request, response) => {
   }
 });
 
-app.get("/api/goals/:id/overview", (request, response) => {
-  const id = Number(request.params.id);
-  const goalData = goals.find((goal) => goal.id === id);
-
-  if (goalData) {
-    const overview = buildOverview(goalData.insertionNodeId, nodes);
-    response.json(overview);
+app.get("/api/goals-overview", (request, response) => {
+  if (!goals || goals.length === 0) {
+    response.status(404).json({ error: "There are no goals" });
   }
+
+  const overview = goals.map((goal) =>
+    buildOverview(goal.insertionNodeId, nodes)
+  );
+  console.log(overview);
+  response.json(overview);
 });
 
 app.get("/api/nodes", (request, response) => {
