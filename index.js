@@ -195,17 +195,22 @@ app.delete("/api/nodes/:id", (request, response) => {
   const id = Number(request.params.id);
   // TODO: remove children nodes of the specified node
 
+  console.log(nodes);
   nodes = nodes
     .filter((node) => node.id !== id)
     .map((node) => {
       if (node.children.some((childId) => childId === id)) {
-        const indToDelete = node.children.find((childId) => childId === id);
-        console.log([...node.children].splice(indToDelete, 1));
-        return { ...node, children: [...node.children].splice(indToDelete, 1) };
+        const indToDelete = node.children.findIndex(
+          (childId) => childId === id
+        );
+        const childrenCopy = [...node.children];
+        childrenCopy.splice(indToDelete, 1);
+        return { ...node, children: childrenCopy };
       } else {
         return node;
       }
     });
+  console.log(nodes);
 
   response.status(204).end();
 });
