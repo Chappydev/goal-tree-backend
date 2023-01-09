@@ -105,7 +105,6 @@ app.get("/api/goals-overview", (request, response) => {
   const overview = goals.map((goal) =>
     buildOverview(goal.insertionNodeId, nodes)
   );
-  console.log(overview);
   response.json(overview);
 });
 
