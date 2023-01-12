@@ -102,9 +102,7 @@ app.get("/api/goals-overview", (request, response) => {
     response.status(404).json({ error: "There are no goals" });
   }
 
-  const overview = goals.map((goal) =>
-    buildOverview(goal.insertionNodeId, nodes)
-  );
+  const overview = goals.map((goal) => buildOverview(goal, nodes));
   response.json(overview);
 });
 

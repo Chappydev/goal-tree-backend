@@ -24,8 +24,8 @@ const buildTree = (insertionNodeId, nodes) => {
   return tree;
 };
 
-const buildOverview = (insertionNodeId, nodes) => {
-  const initNode = nodes.find((node) => node.id === insertionNodeId);
+const buildOverview = (goal, nodes) => {
+  const initNode = nodes.find((node) => node.id === goal.insertionNodeId);
   const incompleteNodes = nodes.reduce(
     (arr, curr) => {
       return !curr.isComplete &&
@@ -36,7 +36,7 @@ const buildOverview = (insertionNodeId, nodes) => {
     [initNode]
   );
 
-  return incompleteNodes;
+  return { goalId: goal.insertionNodeId, incompleteNodes };
 };
 
 module.exports = {
