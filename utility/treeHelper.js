@@ -36,7 +36,7 @@ const buildOverview = (goal, nodes) => {
     [initNode]
   );
 
-  return { goalId: goal.insertionNodeId, goalNode: initNode, incompleteNodes };
+  return { goalId: goal.id, goalNode: initNode, incompleteNodes };
 };
 
 module.exports = {
