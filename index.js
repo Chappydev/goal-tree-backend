@@ -97,6 +97,32 @@ app.get("/api/goals/:id", (request, response) => {
   }
 });
 
+app.post("/api/goals", (request, response) => {
+  if (!request?.body?.name) {
+    response
+      .status(400)
+      .json({ error: "Must include a name for the goal node" });
+  }
+  const { name } = request.body;
+  const goalNode = {
+    id: generateId(),
+    name,
+    isComplete: false,
+    children: [],
+  };
+
+  nodes.push(goalNode);
+
+  const goalData = {
+    id: generateId(),
+    insertionNodeId: goalNode.id,
+  };
+
+  goals.push(goalData);
+
+  response.json({ goalId: goalData.id, goalNode });
+});
+
 app.get("/api/goals-overview", (request, response) => {
   if (!goals || goals.length === 0) {
     response.status(404).json({ error: "There are no goals" });
@@ -161,14 +187,7 @@ app.post("/api/nodes/:id", (request, response) => {
 
   // insert new node's id into parent's children array
   // then push the new node onto the nodes array
-  console.log("Before: ", nodes);
   const newNodes = nodes.map((node) => {
-    console.log(
-      node.id === parentId
-        ? node.children.slice(insertInd, node.children.length)
-        : null,
-      node.children.length
-    );
     return node.id === parentId
       ? {
           id: node.id,
@@ -186,7 +205,6 @@ app.post("/api/nodes/:id", (request, response) => {
   newNodes.push(nodeToInsert);
   nodes = newNodes;
 
-  console.log("After: ", nodes);
   response.json({ parentId, node: nodeToInsert });
 });
 
