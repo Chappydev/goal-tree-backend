@@ -1,18 +1,7 @@
-const express = require("express");
-const app = express();
-const cors = require("cors");
-const goalsRouter = require("./controllers/goals");
-const nodesRouter = require("./controllers/nodes");
-const overviewRouter = require("./controllers/overview");
+const app = require("./app");
+const config = require("./utility/config");
+const logger = require("./utility/logger");
 
-app.use(cors());
-app.use(express.json());
-
-app.use("/api/goals", goalsRouter);
-app.use("/api/nodes", nodesRouter);
-app.use("/api/goalsoverview", overviewRouter);
-
-const PORT = 3001;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(config.PORT, () => {
+  logger.info(`Server running on port ${config.PORT}`);
 });
