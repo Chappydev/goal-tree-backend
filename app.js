@@ -1,6 +1,7 @@
 const config = require("./utility/config");
 const express = require("express");
 const app = express();
+require("express-async-errors");
 const cors = require("cors");
 
 const goalsRouter = require("./controllers/goals");
