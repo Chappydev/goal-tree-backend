@@ -9,7 +9,14 @@ const nodeSchema = new mongoose.Schema({
   isComplete: {
     type: Boolean,
     required: true,
+    default: false,
   },
+  children: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "node",
+    },
+  ],
 });
 
 nodeSchema.set("toJSON", {
