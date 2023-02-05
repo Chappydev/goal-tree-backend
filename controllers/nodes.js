@@ -4,7 +4,7 @@ const Node = require("../models/node");
 const nodesRouter = require("express").Router();
 
 nodesRouter.get("/", async (req, res) => {
-  const nodes = await Node.find({});
+  const nodes = await Node.find({}, null, { disableMiddlewares: true });
   if (nodes) {
     res.json(nodes);
   } else {
@@ -13,7 +13,9 @@ nodesRouter.get("/", async (req, res) => {
 });
 
 nodesRouter.get("/:id", async (req, res) => {
-  const node = await Node.findById(req.params.id);
+  const node = await Node.findById(req.params.id, null, {
+    disableMiddlewares: true,
+  });
   if (node) {
     res.json(node);
   } else {

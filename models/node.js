@@ -1,5 +1,13 @@
 const mongoose = require("mongoose");
 
+const populateChildren = function (next) {
+  console.log(this.options);
+  if (!this.options.disableMiddlewares) {
+    this.populate("children");
+  }
+  next();
+};
+
 const nodeSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -14,10 +22,13 @@ const nodeSchema = new mongoose.Schema({
   children: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "node",
+      ref: "Node",
     },
   ],
 });
+
+nodeSchema.pre("findOne", populateChildren);
+nodeSchema.pre("find", populateChildren);
 
 nodeSchema.set("toJSON", {
   transform: (document, returnedObject) => {

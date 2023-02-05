@@ -1,43 +1,33 @@
-const { goals, nodes, generateId } = require("../utility/predbLeftovers");
-const { buildTree } = require("../utility/treeHelper");
+const Goal = require("../models/goal");
+const Node = require("../models/node");
 
 const goalsRouter = require("express").Router();
 
-goalsRouter.get("/:id", (request, response) => {
-  const id = Number(request.params.id);
-  const goalData = goals.find((goal) => goal.id === id);
+goalsRouter.get("/:id", async (req, res) => {
+  const goalData = await Goal.findById(req.params.id).populate("insertionNode");
   if (goalData) {
-    const treeData = buildTree(goalData.insertionNodeId, nodes);
-    response.json(treeData);
+    res.json(goalData);
   } else {
-    response.status(404).end();
+    res.status(404).end();
   }
 });
 
-goalsRouter.post("/", (request, response) => {
-  if (!request?.body?.name) {
-    response
-      .status(400)
-      .json({ error: "Must include a name for the goal node" });
+goalsRouter.post("/", async (req, res) => {
+  if (!req?.body?.name) {
+    res.status(400).json({ error: "Must include a name for the goal node" });
   }
-  const { name } = request.body;
-  const goalNode = {
-    id: generateId(),
+  const { name } = req.body;
+  const goalNode = new Node({
     name,
-    isComplete: false,
-    children: [],
-  };
+  });
+  const savedGoalNode = await goalNode.save();
 
-  nodes.push(goalNode);
+  const goal = new Goal({
+    insertionNode: savedGoalNode.id,
+  });
+  const savedGoal = await goal.save();
 
-  const goalData = {
-    id: generateId(),
-    insertionNodeId: goalNode.id,
-  };
-
-  goals.push(goalData);
-
-  response.json({ goalId: goalData.id, goalNode });
+  res.json({ goalId: savedGoal.id, goalNode: savedGoalNode });
 });
 
 module.exports = goalsRouter;
