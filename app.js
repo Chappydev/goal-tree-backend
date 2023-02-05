@@ -31,6 +31,7 @@ mongoose
 app.use(cors());
 app.use(express.json());
 app.use(middleware.requestLogger);
+app.use(middleware.tokenDecoder);
 
 app.use("/api/goals", goalsRouter);
 app.use("/api/nodes", nodesRouter);

@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const logger = require("./logger");
 
 const requestLogger = (req, res, next) => {
@@ -8,8 +9,9 @@ const requestLogger = (req, res, next) => {
   next();
 };
 
-const unknownEndpoint = (req, res) => {
+const unknownEndpoint = (req, res, next) => {
   res.status(404).send({ error: "unknown endpoint" });
+  next();
 };
 
 const errorHandler = (error, req, res, next) => {
@@ -24,8 +26,25 @@ const errorHandler = (error, req, res, next) => {
   next(error);
 };
 
+const tokenDecoder = (req, res, next) => {
+  const auth = req.get("authorization");
+  if (!auth || !auth.startsWith("Bearer ")) {
+    req.decodedToken = null;
+    next();
+  }
+  const token = auth.substring(7);
+
+  const decodedToken = jwt.verify(token, process.env.SECRET);
+  if (!decodedToken.id) {
+    return res.status(401).json({ error: "invalid token" });
+  }
+  req.decodedToken = decodedToken;
+  next();
+};
+
 module.exports = {
   requestLogger,
   unknownEndpoint,
   errorHandler,
+  tokenDecoder,
 };
