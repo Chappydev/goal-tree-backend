@@ -17,6 +17,11 @@ const populateChildren = function (next) {
 };
 
 const nodeSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   name: {
     type: String,
     required: true,
@@ -43,6 +48,7 @@ nodeSchema.set("toJSON", {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
     delete returnedObject.__v;
+    delete returnedObject.user;
   },
 });
 
