@@ -13,9 +13,16 @@ overviewRouter.get("/", async (req, res) => {
     return res.status(404).json({ error: "no such user" });
   }
 
+  // NOTE: match is not working here
   const goalsOverview = await Goal.find({ _id: { $in: user.goals } }).populate({
     path: "insertionNode",
-    match: { isComplete: false },
+    options: { disableMiddlewares: true },
+    populate: {
+      path: "children",
+      match: {
+        isComplete: false,
+      },
+    },
   });
 
   res.json(goalsOverview);

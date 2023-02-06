@@ -1,9 +1,17 @@
 const mongoose = require("mongoose");
 
 const populateChildren = function (next) {
-  console.log(this.options);
+  let match = null;
+  if (this._conditions.hasOwnProperty("isComplete")) {
+    match = {
+      isComplete: this._conditions.isComplete,
+    };
+  }
   if (!this.options.disableMiddlewares) {
-    this.populate("children");
+    this.populate({
+      path: "children",
+      match,
+    });
   }
   next();
 };
