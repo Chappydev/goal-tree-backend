@@ -1,20 +1,13 @@
 const Goal = require("../models/goal");
 const User = require("../models/user");
+const { userFinder } = require("../utility/middleware");
 
 const overviewRouter = require("express").Router();
 
-overviewRouter.get("/", async (req, res) => {
-  if (!req.decodedToken) {
-    return res.status(401).json({ error: "invalid token" });
-  }
-
-  const user = await User.findById(req.decodedToken.id);
-  if (!user) {
-    return res.status(404).json({ error: "no such user" });
-  }
-
-  // NOTE: match is not working here
-  const goalsOverview = await Goal.find({ _id: { $in: user.goals } }).populate({
+overviewRouter.get("/", userFinder, async (req, res) => {
+  const goalsOverview = await Goal.find({
+    _id: { $in: req.user.goals },
+  }).populate({
     path: "insertionNode",
     options: { disableMiddlewares: true },
     populate: {
