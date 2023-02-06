@@ -7,6 +7,7 @@ const cors = require("cors");
 const goalsRouter = require("./controllers/goals");
 const nodesRouter = require("./controllers/nodes");
 const userRouter = require("./controllers/users");
+const loginRouter = require("./controllers/login");
 const overviewRouter = require("./controllers/overview");
 
 const middleware = require("./utility/middleware");
@@ -36,6 +37,7 @@ app.use(middleware.tokenDecoder);
 app.use("/api/goals", goalsRouter);
 app.use("/api/nodes", nodesRouter);
 app.use("/api/users", userRouter);
+app.use("/api/login", loginRouter);
 app.use("/api/goalsoverview", overviewRouter);
 
 app.use(middleware.unknownEndpoint);
