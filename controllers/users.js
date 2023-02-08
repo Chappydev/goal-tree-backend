@@ -14,7 +14,7 @@ userRouter.get("/:id", async (req, res) => {
     },
   });
   if (user) {
-    res.json(user);
+    res.json({ id: user._id, username: user.username, goals: user.goals });
   } else {
     res.status(404).end();
   }
@@ -33,7 +33,11 @@ userRouter.post("/", async (req, res) => {
 
   const savedUser = await user.save();
 
-  res.status(201).json(savedUser);
+  res.status(201).json({
+    id: savedUser._id,
+    username: savedUser.username,
+    goals: savedUser.goals,
+  });
 });
 
 module.exports = userRouter;
