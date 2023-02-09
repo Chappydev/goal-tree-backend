@@ -3,6 +3,17 @@ const User = require("../models/user");
 
 const userRouter = require("express").Router();
 
+userRouter.get("/exists", async (req, res) => {
+  const username = req.query.username;
+  if (!username) {
+    return res.status(400).json({ error: "username missing" });
+  }
+
+  const user = await User.exists({ username });
+
+  res.json({ username, exists: !!user });
+});
+
 userRouter.get("/:id", async (req, res) => {
   const user = await User.findById(req.params.id).populate({
     path: "goals",
