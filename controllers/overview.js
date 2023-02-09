@@ -5,6 +5,7 @@ const { userFinder } = require("../utility/middleware");
 const overviewRouter = require("express").Router();
 
 overviewRouter.get("/", userFinder, async (req, res) => {
+  await req.user.populate("goals");
   const goalsOverview = await Goal.find({
     _id: { $in: req.user.goals },
   }).populate({
