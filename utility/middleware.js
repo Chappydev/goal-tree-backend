@@ -24,6 +24,8 @@ const errorHandler = (error, req, res, next) => {
     return res.status(400).json({ error: error.message });
   } else if (error.name === "JsonWebTokenError") {
     return res.status(400).json({ error: "token missing or invalid" });
+  } else if (error.name === "MongoServerError" && error.code === 11000) {
+    return res.status(400).json({ error: "that username is already taken" });
   }
 
   next(error);
