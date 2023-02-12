@@ -88,7 +88,6 @@ goalsRouter.delete("/:id", userFinder, async (req, res) => {
 
   const { ids } = idAggregate[0];
   ids.push(goalToDelete.insertionNode);
-  console.log(ids);
 
   await Node.deleteMany({ _id: { $in: ids } });
   await goalToDelete.delete();
