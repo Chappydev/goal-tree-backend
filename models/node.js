@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+// can't use arrow syntax because of the this keyword
 const populateChildren = function (next) {
   let match = null;
   if (this._conditions.hasOwnProperty("isComplete")) {
