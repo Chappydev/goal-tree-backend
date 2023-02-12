@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Node = require("../models/node");
 const { userFinder } = require("../utility/middleware");
 
@@ -118,7 +119,40 @@ nodesRouter.delete("/:id", userFinder, async (req, res) => {
     await parentNode.save();
   }
 
-  await Node.findByIdAndDelete(req.params.id, { disableMiddlewares: true });
+  const castedId = new mongoose.Types.ObjectId(req.params.id);
+  const idAggregate = await Node.aggregate([
+    {
+      $match: {
+        _id: castedId,
+      },
+    },
+    {
+      $graphLookup: {
+        from: "nodes",
+        startWith: "$children",
+        connectFromField: "children",
+        connectToField: "_id",
+        as: "ids",
+      },
+    },
+    {
+      $project: {
+        ids: {
+          $map: {
+            input: "$ids",
+            as: "id",
+            in: "$$id._id",
+          },
+        },
+        _id: 0,
+      },
+    },
+  ]);
+
+  const { ids } = idAggregate[0];
+  ids.push(castedId);
+
+  await Node.deleteMany({ _id: { $in: ids } });
 
   res.status(204).end();
 });
