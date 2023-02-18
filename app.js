@@ -13,6 +13,7 @@ const overviewRouter = require("./controllers/overview");
 const middleware = require("./utility/middleware");
 const logger = require("./utility/logger");
 const mongoose = require("mongoose");
+const staticRouter = require("./controllers/static");
 
 mongoose.set("strictQuery", false);
 
@@ -40,6 +41,7 @@ app.use("/api/nodes", nodesRouter);
 app.use("/api/users", userRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/goalsoverview", overviewRouter);
+app.use("/", staticRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
