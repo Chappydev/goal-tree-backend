@@ -68,7 +68,6 @@ nodesRouter.post("/:id", userFinder, async (req, res) => {
   }
 
   const body = req.body;
-  console.log(body);
 
   if (body.name === undefined || body.insertInd === undefined) {
     return res
@@ -94,8 +93,6 @@ nodesRouter.post("/:id", userFinder, async (req, res) => {
 });
 
 nodesRouter.delete("/:id", userFinder, async (req, res) => {
-  // TODO: remove children nodes of the specified node
-
   const parentNode = await Node.findOne(
     {
       children: { $elemMatch: { $eq: req.params.id } },
@@ -109,12 +106,13 @@ nodesRouter.delete("/:id", userFinder, async (req, res) => {
       .json({ error: "users may only delete their own nodes" });
   }
 
+  console.log(parentNode);
   if (parentNode) {
     const newChildren = [...parentNode.children];
-    newChildren.splice(
-      newChildren.findIndex((child) => child === req.params.id),
-      1
+    const indexToRemove = newChildren.findIndex(
+      (child) => child.toString() === req.params.id
     );
+    const deleted = newChildren.splice(indexToRemove, 1);
     parentNode.children = newChildren;
     await parentNode.save();
   }
